@@ -9,12 +9,13 @@ export default function Home() {
   // État pour stocker la reponse du joueur
   const [reponseJoueur, setReponseJoueur] = useState("");
 
-  type ReponseJoueurType = {s
+  type ReponseJoueurType = {
     question: string;
     reponse: string;
     points: number;
     reponseCorrecte: string;
     category: string;
+    isCorrect: boolean | null;
   };
 
   // Tableau pour stocker les reponses du joueur
@@ -56,26 +57,69 @@ export default function Home() {
 
   // Récupérer la question actuelle
   const questionActuelle = questions[questionIndex];
+  const [tempsRestant, setTempsRestant] = useState(10);
 
-  function clickValider() {
+    useEffect(() => {
+  if (tempsRestant <= 0) {
+    reponseSuivante()
+    return;
+    
+  }
+
+  const timer = setInterval(() => {
+    setTempsRestant((ancienTemps) => ancienTemps - 1);
+  }, 1000);
+
+  return () => clearInterval(timer);
+}, [tempsRestant]);
+
+  function reponseSuivante() {
     const reponseASauvegarder = {
       question: questionActuelle.text,
       reponse: reponseJoueur,
       points: questionActuelle.points,
       reponseCorrecte: questionActuelle.reponse,
-      category: questionActuelle.category
+      category: questionActuelle.category,
+      isCorrect: null
     };
 
     setReponsesJoueur([...reponsesJoueur, reponseASauvegarder]);
 
     if (questionIndex < questions.length - 1) {
       setQuestionIndex(questionIndex + 1);
+      setTempsRestant(5);
     } else {
-      alert("Quiz terminé !");
+      setQuizTermine(true);
     }
 
     setReponseJoueur("");
+  }  
+
+  const [quizTermine, setQuizTermine] = useState(false);
+
+  if (quizTermine) {
+    return(
+      <main>
+        <header>
+          <h1>ADA Quiz</h1>
+        </header>
+
+        <h2>Quiz Terminé !</h2>
+
+        {reponsesJoueur.map((r, index) => (
+          <div key={index}>
+            <p>
+              {r.question} - {r.reponse} - {r.points} - {r.category}
+            </p>
+            <button>Correct</button>
+            <button>Incorrect</button>
+          </div>
+        ))
+        } 
+      </main>
+    )
   }
+
 
   return (
     <main>
@@ -89,7 +133,7 @@ export default function Home() {
 
       <input type="text" value={reponseJoueur} onChange={(event) => setReponseJoueur(event.target.value)} />
 
-      <button onClick={clickValider}>Valider</button>
+      <p> Timer : {tempsRestant}</p>
 
       {reponsesJoueur.map((r, index) => (
         <p key={index}>
