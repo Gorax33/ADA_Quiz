@@ -1,22 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
 
 
 export default function Home() {
 
   // État pour stocker la reponse du joueur
-  const [reponseJoueur, setreponseJoueur] = useState("");
+  const [reponseJoueur, setReponseJoueur] = useState("");
 
-  type ReponseJoueurType = {
+  type ReponseJoueurType = {s
     question: string;
     reponse: string;
     points: number;
     reponseCorrecte: string;
+    category: string;
   };
 
   // Tableau pour stocker les reponses du joueur
-  const [reponsesJoueur, setreponsesJoueur] = useState<ReponseJoueurType[]>([]);
+  const [reponsesJoueur, setReponsesJoueur] = useState<ReponseJoueurType[]>([]);
   const [questionIndex, setQuestionIndex] = useState(0);
 
   const questions = [
@@ -61,10 +63,10 @@ export default function Home() {
       reponse: reponseJoueur,
       points: questionActuelle.points,
       reponseCorrecte: questionActuelle.reponse,
+      category: questionActuelle.category
     };
 
-    setreponsesJoueur([...reponsesJoueur, reponseASauvegarder]);
-    console.log(reponseASauvegarder);
+    setReponsesJoueur([...reponsesJoueur, reponseASauvegarder]);
 
     if (questionIndex < questions.length - 1) {
       setQuestionIndex(questionIndex + 1);
@@ -72,7 +74,7 @@ export default function Home() {
       alert("Quiz terminé !");
     }
 
-    setreponseJoueur("");
+    setReponseJoueur("");
   }
 
   return (
@@ -85,9 +87,15 @@ export default function Home() {
 
       <h2>{questionActuelle.text}</h2>
 
-      <input type="text" value={reponseJoueur} onChange={(event) => setreponseJoueur(event.target.value)} />
+      <input type="text" value={reponseJoueur} onChange={(event) => setReponseJoueur(event.target.value)} />
 
       <button onClick={clickValider}>Valider</button>
+
+      {reponsesJoueur.map((r, index) => (
+        <p key={index}>
+          {r.question} - {r.reponse} - {r.points} - {r.category}
+        </p>
+      ))}
 
     </main>
   );
