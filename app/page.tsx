@@ -6,22 +6,6 @@ import { useEffect, useState } from "react";
 
 export default function Home() {
 
-  // État pour stocker la reponse du joueur
-  const [reponseJoueur, setReponseJoueur] = useState("");
-
-  type ReponseJoueurType = {
-    question: string;
-    reponse: string;
-    points: number;
-    reponseCorrecte: string;
-    category: string;
-    isCorrect: boolean | null;
-  };
-
-  // Tableau pour stocker les reponses du joueur
-  const [reponsesJoueur, setReponsesJoueur] = useState<ReponseJoueurType[]>([]);
-  const [questionIndex, setQuestionIndex] = useState(0);
-
   const questions = [
     {
       text: "Quelle est la capitale de la France ?",
@@ -55,9 +39,31 @@ export default function Home() {
     }
   ];
 
+  // État pour stocker la reponse du joueur
+  const [reponseJoueur, setReponseJoueur] = useState("");
+
+  // Tableau pour stocker les reponses du joueur
+  const [reponsesJoueur, setReponsesJoueur] = useState<ReponseJoueurType[]>([]);
+  const [questionIndex, setQuestionIndex] = useState(0);
+
   // Récupérer la question actuelle
   const questionActuelle = questions[questionIndex];
   const [tempsRestant, setTempsRestant] = useState(10);
+
+  const timer = setInterval(() => {
+    setTempsRestant((ancienTemps) => ancienTemps - 1);
+  }, 1000);
+
+  const [quizTermine, setQuizTermine] = useState(false);
+
+  type ReponseJoueurType = {
+    question: string;
+    reponse: string;
+    points: number;
+    reponseCorrecte: string;
+    category: string;
+    isCorrect: boolean | null;
+  };
 
     useEffect(() => {
   if (tempsRestant <= 0) {
@@ -65,10 +71,6 @@ export default function Home() {
     return;
     
   }
-
-  const timer = setInterval(() => {
-    setTempsRestant((ancienTemps) => ancienTemps - 1);
-  }, 1000);
 
   return () => clearInterval(timer);
 }, [tempsRestant]);
@@ -94,8 +96,6 @@ export default function Home() {
 
     setReponseJoueur("");
   }  
-
-  const [quizTermine, setQuizTermine] = useState(false);
 
   if (quizTermine) {
     return(
